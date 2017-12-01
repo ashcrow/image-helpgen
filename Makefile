@@ -19,7 +19,7 @@ help:
 	@echo " - install: Install build results to the system"
 
 build:
-	go build -ldflags '${LDFLAGS}' -o image-helpgen cmd/main.go
+	go build -ldflags '${LDFLAGS}' -o image-helpgen main.go
 	strip image-helpgen
 
 clean:
