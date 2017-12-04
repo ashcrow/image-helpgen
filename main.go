@@ -31,7 +31,7 @@ func printHelp() {
 	fmt.Println("Commands:")
 	fmt.Println("  guide: Asks for input and builds markdown and man output")
 	fmt.Println("  dockerfile: Parses a Dockerfile and generates a markdown template")
-	fmt.Println("  man: Generate man page off of a previouslty filled out markdown template")
+	fmt.Println("  man: Generate man page off of a previously filled out markdown template")
 }
 
 // main function for CLI
