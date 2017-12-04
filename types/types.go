@@ -13,23 +13,28 @@ import (
 	"github.com/ashcrow/image-helpgen/utils"
 )
 
+// Port is a representation of a single Port entity
 type Port struct {
 	Container   int
 	Host        int
 	Description string
 }
 
+// Volume is a representation of a single Volume entity
 type Volume struct {
 	Container   string
 	Host        string
 	Description string
 }
 
+// EnvironmentVariable is a representation of a single environment variable entity
 type EnvironmentVariable struct {
 	Name        string
+	Default     string
 	Description string
 }
 
+// TplContext represents the context used by TemplateRenderer to render content
 type TplContext struct {
 	ImageName                 string
 	ImageAuthor               string
@@ -59,16 +64,20 @@ func NewTemplateRenderer(tf string) TemplateRenderer {
 	utils.PanicOnErr(err)
 
 	tr.Reader = bufio.NewReader(os.Stdin)
-	tr.Context = TplContext{}
+	tr.Context = TplContext{
+		ImageDocDate: utils.GenerateDocDate(),
+	}
 	return tr
 }
 
+// ReadString reads a single string and returns the result
 func (t *TemplateRenderer) ReadString(prompt string) string {
 	fmt.Printf(prompt + ": ")
 	result, _ := t.Reader.ReadString('\n')
 	return strings.TrimSuffix(result, "\n")
 }
 
+// ReadText reads a block of text and returns the result
 func (t *TemplateRenderer) ReadText(prompt string) string {
 	fmt.Printf(prompt + " (Enter . alone on a line to end):\n")
 	result := ""
@@ -82,6 +91,7 @@ func (t *TemplateRenderer) ReadText(prompt string) string {
 	return strings.TrimSuffix(result, ".\n")
 }
 
+// ReadEnvironmentVariables populates and returns a list of EnvironmentVariables
 func (t *TemplateRenderer) ReadEnvironmentVariables() {
 	fmt.Println("Enter Environment Variable information. Enter empty name to finish.")
 	for {
@@ -89,13 +99,18 @@ func (t *TemplateRenderer) ReadEnvironmentVariables() {
 		if name == "" {
 			break
 		}
+		defaultValue := t.ReadString("Default Value")
 		description := t.ReadString("Description")
 		t.Context.ImageEnvironmentVariables = append(
 			t.Context.ImageEnvironmentVariables,
-			EnvironmentVariable{Name: name, Description: description})
+			EnvironmentVariable{
+				Name:        name,
+				Default:     defaultValue,
+				Description: description})
 	}
 }
 
+// ReadPorts reads and populates a list of Ports
 func (t *TemplateRenderer) ReadPorts() {
 	fmt.Println("Enter port information. Enter empty host port to finish.")
 	for {
@@ -109,10 +124,14 @@ func (t *TemplateRenderer) ReadPorts() {
 		hostPort, _ := strconv.Atoi(hp)
 		t.Context.ImagePorts = append(
 			t.Context.ImagePorts,
-			Port{Container: containerPort, Host: hostPort, Description: description})
+			Port{
+				Container:   containerPort,
+				Host:        hostPort,
+				Description: description})
 	}
 }
 
+// ReadVolumes reads and populates a list of Volumes
 func (t *TemplateRenderer) ReadVolumes() {
 	fmt.Println("Enter volume information. Enter empty host volume to finish.")
 	for {

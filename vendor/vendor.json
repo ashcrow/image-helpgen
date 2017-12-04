@@ -15,11 +15,23 @@
 			"revisionTime": "2017-08-27T12:01:20Z"
 		},
 		{
+			"checksumSHA1": "4/Zm2a00DOFQfN3JF2AvByopoxg=",
+			"path": "github.com/docker/docker/builder/dockerfile/command",
+			"revision": "7ef9266ba090a3230355c39352dddf41aeb5b726",
+			"revisionTime": "2017-12-02T01:30:12Z"
+		},
+		{
+			"checksumSHA1": "Utw2jlN5hHpP9PHZzcNohKWae6U=",
+			"path": "github.com/projectatomic/docker/builder/dockerfile/parser",
+			"revision": "ae819d815a68aa8c2f1de4673ab59811e8c343d5",
+			"revisionTime": "2017-02-21T21:16:15Z"
+		},
+		{
 			"checksumSHA1": "1KVewmQICPa+IH1gYJUKDgNbKpY=",
 			"path": "github.com/russross/blackfriday",
 			"revision": "6d1ef893fcb01b4f50cb6e57ed7df3e2e627b6b2",
 			"revisionTime": "2017-10-11T18:22:19Z"
 		}
 	],
-	"rootPath": "github.com/ashcrow/container-help"
+	"rootPath": "github.com/ashcrow/image-helpgen"
 }

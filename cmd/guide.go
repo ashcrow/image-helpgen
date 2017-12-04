@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/ashcrow/image-helpgen/types"
+	"github.com/ashcrow/image-helpgen/utils"
 )
 
-// GuideCommand guides the user to fill out sections of the template
-func GuideCommand(tr *types.TemplateRenderer) {
+// GuideCommand executes the logic that is exposed via the cli at
+// image-helpgen guide [args]
+func GuideCommand(template, basename string) {
+	tr := types.NewTemplateRenderer(template)
 	tr.Context.ImageName = tr.ReadString("Image Name")
 	tr.Context.ImageAuthor = tr.ReadString("Image Author")
 	tr.Context.ImageShortDescription = tr.ReadString("Short Description")
@@ -19,7 +19,6 @@ func GuideCommand(tr *types.TemplateRenderer) {
 	tr.ReadPorts()
 	tr.ReadVolumes()
 
-	// Set the doc date to now
-	now := time.Now()
-	tr.Context.ImageDocDate = fmt.Sprintf("%s %d", now.Month(), now.Year())
+	tr.Context.ImageDocDate = utils.GenerateDocDate()
+	tr.Write(basename)
 }

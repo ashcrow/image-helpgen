@@ -21,7 +21,6 @@ import (
 	"os"
 
 	"github.com/ashcrow/image-helpgen/cmd"
-	"github.com/ashcrow/image-helpgen/types"
 	"github.com/ashcrow/image-helpgen/utils"
 )
 
@@ -31,6 +30,7 @@ func printHelp() {
 	fmt.Printf("Usage: %s <command> [args]\n", os.Args[0])
 	fmt.Println("Commands:")
 	fmt.Println("  guide: Asks for input and builds markdown and man output")
+	fmt.Println("  dockerfile: Parses a Dockerfile and generates a markdown template")
 	fmt.Println("  man: Generate man page off of a previouslty filled out markdown template")
 }
 
@@ -38,6 +38,7 @@ func printHelp() {
 func main() {
 	var template string
 	var basename string
+	var dockerfilePath string
 
 	// Setup subcommand parsers
 	guideCmd := flag.NewFlagSet("guide", flag.ExitOnError)
@@ -45,6 +46,15 @@ func main() {
 		&template, "template", defaultTemplate, "Template to use when rendering")
 	guideCmd.StringVar(
 		&basename, "basename", "help", "Base name to use for file writing")
+
+	dockerfileCmd := flag.NewFlagSet("dockerfile", flag.ExitOnError)
+	dockerfileCmd.StringVar(
+		&template, "template", defaultTemplate, "Template to use when rendering")
+	dockerfileCmd.StringVar(
+		&basename, "basename", "help", "Base name to use for file writing")
+	dockerfileCmd.StringVar(
+		&dockerfilePath, "dockerfile", "Dockerfile",
+		"Full path to the Dockerfile to read")
 
 	manCmd := flag.NewFlagSet("man", flag.ExitOnError)
 	manCmd.StringVar(
@@ -56,18 +66,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Populated by commands
-	var tr types.TemplateRenderer
-
 	// Otherwise pass off to the subcommand defaulting to help if
 	// the command is not valid
 	switch os.Args[1] {
 	case "guide":
 		guideCmd.Parse(os.Args[2:])
-		tr = types.NewTemplateRenderer(template)
-		cmd.GuideCommand(&tr)
-		// Write the results
-		tr.Write(basename)
+		cmd.GuideCommand(template, basename)
+	case "dockerfile":
+		dockerfileCmd.Parse(os.Args[2:])
+		cmd.DockerfileCommand(dockerfilePath, template, basename)
 	case "man":
 		manCmd.Parse(os.Args[2:])
 		utils.WriteManFromMd(basename)

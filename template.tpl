@@ -17,9 +17,9 @@
 The image recognizes the following environment variables that you can set
 during initialization be passing `-e VAR=VALUE` to the Docker run command.
 
-|     Variable name        |       Description                                           |
-| :----------------------- | ----------------------------------------------------------- |
-{{ range $_, $_data := .ImageEnvironmentVariables}}| `{{ $_data.Name }}`   | {{ $_data.Description}} |
+|     Variable name        | Default |      Description                                           |
+| :----------------------- | ------- | ---------------------------------------------------------- |
+{{ range $_, $_data := .ImageEnvironmentVariables}}| `{{ $_data.Name }}` | `{{ $_data.Default }}`   | {{ $_data.Description}} |
 {{ end }}
 
 # SECURITY IMPLICATIONS
