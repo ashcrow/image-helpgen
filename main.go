@@ -24,7 +24,7 @@ import (
 	"github.com/ashcrow/image-helpgen/utils"
 )
 
-const defaultTemplate = "/etc/image-helpgen/template.tpl"
+var defaultTemplate string
 
 func printHelp() {
 	fmt.Printf("Usage: %s <command> [args]\n", os.Args[0])
