@@ -9,7 +9,7 @@ LDFLAGS := -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.
 CONFIG_DIR ?= /etc
 BIN_DIR ?= /usr/bin
 
-.PHONY: help build clean deps install
+.PHONY: help build clean deps install lint
 
 help:
 	@echo "Targets:"
@@ -17,6 +17,7 @@ help:
 	@echo " - clean: Clean up after build"
 	@echo " - deps: Install required tool and dependencies for building"
 	@echo " - install: Install build results to the system"
+	@echo " - lint: Run golint"
 
 build:
 	go build -ldflags '${LDFLAGS}' -o image-helpgen main.go
@@ -34,3 +35,6 @@ install:
 	install --mode 644 template.tpl ${PREFIX}${CONFIG_DIR}/image-helpgen/template.tpl
 	install --mode 755 image-helpgen ${PREFIX}${BIN_DIR}/image-helpgen
 
+lint:
+	go get -u github.com/golang/lint/golint
+	golint . cmd/ types/ utils/
