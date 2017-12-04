@@ -2,6 +2,8 @@
 
 Generates image help and man files based on input
 
+See [/example](/example) for an example run generating a``Dockerfile`` to ``help.md`` and ``help.1``.
+
 ## Build
 **Note**: ``image-helpgen`` uses [govendor](https://github.com/kardianos/govendor)
 
