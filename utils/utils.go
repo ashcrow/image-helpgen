@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ashcrow/go-md2man/md2man"
+	"github.com/cpuguy83/go-md2man/md2man"
 )
 
 // PanicOnErr is a shortcut to painic when an error is returned
