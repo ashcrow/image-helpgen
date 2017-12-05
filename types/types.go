@@ -3,12 +3,9 @@ package types
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"os"
-	"strconv"
-	"strings"
 
 	"github.com/ashcrow/image-helpgen/utils"
 )
@@ -68,83 +65,6 @@ func NewTemplateRenderer(tf string) TemplateRenderer {
 		ImageDocDate: utils.GenerateDocDate(),
 	}
 	return tr
-}
-
-// ReadString reads a single string and returns the result
-func (t *TemplateRenderer) ReadString(prompt string) string {
-	fmt.Printf(prompt + ": ")
-	result, _ := t.Reader.ReadString('\n')
-	return strings.TrimSuffix(result, "\n")
-}
-
-// ReadText reads a block of text and returns the result
-func (t *TemplateRenderer) ReadText(prompt string) string {
-	fmt.Printf(prompt + " (Enter . alone on a line to end):\n")
-	result := ""
-	for {
-		data, _ := t.Reader.ReadString('\n')
-		if data == ".\n" {
-			break
-		}
-		result = result + data
-	}
-	return strings.TrimSuffix(result, ".\n")
-}
-
-// ReadEnvironmentVariables populates and returns a list of EnvironmentVariables
-func (t *TemplateRenderer) ReadEnvironmentVariables() {
-	fmt.Println("Enter Environment Variable information. Enter empty name to finish.")
-	for {
-		name := t.ReadString("Name")
-		if name == "" {
-			break
-		}
-		defaultValue := t.ReadString("Default Value")
-		description := t.ReadString("Description")
-		t.Context.ImageEnvironmentVariables = append(
-			t.Context.ImageEnvironmentVariables,
-			EnvironmentVariable{
-				Name:        name,
-				Default:     defaultValue,
-				Description: description})
-	}
-}
-
-// ReadPorts reads and populates a list of Ports
-func (t *TemplateRenderer) ReadPorts() {
-	fmt.Println("Enter port information. Enter empty host port to finish.")
-	for {
-		hp := t.ReadString("Host Port")
-		if hp == "" {
-			break
-		}
-		cp := t.ReadString("Container Port")
-		description := t.ReadString("Description")
-		containerPort, _ := strconv.Atoi(cp)
-		hostPort, _ := strconv.Atoi(hp)
-		t.Context.ImagePorts = append(
-			t.Context.ImagePorts,
-			Port{
-				Container:   containerPort,
-				Host:        hostPort,
-				Description: description})
-	}
-}
-
-// ReadVolumes reads and populates a list of Volumes
-func (t *TemplateRenderer) ReadVolumes() {
-	fmt.Println("Enter volume information. Enter empty host volume to finish.")
-	for {
-		hv := t.ReadString("Host Volume")
-		if hv == "" {
-			break
-		}
-		cv := t.ReadString("Container Volume")
-		description := t.ReadString("Description")
-		t.Context.ImageVolumes = append(
-			t.Context.ImageVolumes,
-			Volume{Container: cv, Host: hv, Description: description})
-	}
 }
 
 // WriteMarkdown writes a markdown version of the output.
