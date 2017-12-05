@@ -2,6 +2,8 @@
 
 Generates image help and man files based on input
 
+[![Build Status](https://travis-ci.org/ashcrow/image-helpgen.svg)](https://travis-ci.org/ashcrow/image-helpgen/)
+
 See [/example](/example) for an example run generating a``Dockerfile`` to ``help.md`` and ``help.1``.
 
 ## Build
