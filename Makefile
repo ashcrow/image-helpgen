@@ -9,7 +9,7 @@ LDFLAGS := -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.
 CONFIG_DIR ?= /etc
 BIN_DIR ?= /usr/bin
 
-.PHONY: help build clean deps install lint
+.PHONY: help build clean deps install lint test
 
 help:
 	@echo "Targets:"
@@ -18,6 +18,7 @@ help:
 	@echo " - deps: Install required tool and dependencies for building"
 	@echo " - install: Install build results to the system"
 	@echo " - lint: Run golint"
+	@echo " - test: Run unittests"
 	@echo ""
 	@echo "Variables:"
 	@echo " - PREFIX: The root location to install. This prepends to all *_DIR variables. Set to: ${PREFIX}"
@@ -48,3 +49,8 @@ install: clean build
 lint:
 	go get -u github.com/golang/lint/golint
 	golint . cmd/ types/ utils/
+
+
+test:
+	go list ./... | grep -v vendor | xargs govendor test -v
+	#govendor test -v -cover github.com/ashcrow/image-helpgen/...
