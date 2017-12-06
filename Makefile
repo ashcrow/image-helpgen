@@ -53,4 +53,3 @@ lint:
 
 test:
 	go list ./... | grep -v vendor | xargs govendor test -v
-	#govendor test -v -cover github.com/ashcrow/image-helpgen/...
