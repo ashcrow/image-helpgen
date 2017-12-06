@@ -1,6 +1,6 @@
 # image-helpgen
 
-Generates image help and man files based on input
+Generates image help and man files based on input. Initial idea from [atomic-wg](https://pagure.io/atomic-wg/issue/354) on [pagure](https://pagure.io/).
 
 [![Build Status](https://travis-ci.org/ashcrow/image-helpgen.svg)](https://travis-ci.org/ashcrow/image-helpgen/)
 
