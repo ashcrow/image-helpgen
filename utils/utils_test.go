@@ -37,7 +37,7 @@ func TestStripEmail(t *testing.T) {
 
 	for _, tc := range cases {
 		if StripEmail(tc.Input) != tc.Expected {
-			t.Error("%s != %s", tc.Input, tc.Expected)
+			t.Errorf("%s != %s", tc.Input, tc.Expected)
 		}
 	}
 }
@@ -55,7 +55,7 @@ func TestStripQuotes(t *testing.T) {
 
 	for _, tc := range cases {
 		if StripQuotes(tc.Input) != tc.Expected {
-			t.Error("%s != %s", tc.Input, tc.Expected)
+			t.Errorf("%s != %s", tc.Input, tc.Expected)
 		}
 	}
 }
@@ -69,7 +69,7 @@ func TestGenerateDocDate(t *testing.T) {
 	}
 	year, _ := strconv.Atoi(dateSplit[1])
 	if now.Year() != year {
-		t.Errorf("%i != %i", now.Year(), year)
+		t.Errorf("%d != %d", now.Year(), year)
 	}
 }
 
