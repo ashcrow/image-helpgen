@@ -24,4 +24,5 @@ script:
   - make lint
   - make deps
   - govendor list
+  - make test
   - make build
