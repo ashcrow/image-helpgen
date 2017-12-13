@@ -53,3 +53,6 @@ lint:
 
 test:
 	go list ./... | grep -v vendor | xargs govendor test -v
+
+e2e: build
+	./e2e.sh

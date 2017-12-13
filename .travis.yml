@@ -26,3 +26,4 @@ script:
   - govendor list
   - make test
   - make build
+  - make e2e
