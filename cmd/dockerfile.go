@@ -28,82 +28,17 @@ func DockerfileCommand(dockerfilePath, template, basename string) {
 	tpl := types.NewTemplateRenderer(template)
 	tpl.Context.ImageLongDescription = "TODO"
 
-	// TODO: This should be broken up to read cleaner.
 	for {
 		for _, child := range n.Children {
 			switch child.Value {
 			case "env":
-				for {
-					if child.Next != nil {
-						// Append to EnvironmentVariable container
-						tpl.Context.ImageEnvironmentVariables = append(tpl.Context.ImageEnvironmentVariables, types.EnvironmentVariable{
-							Name:        child.Next.Value,
-							Default:     child.Next.Next.Value,
-							Description: "TODO",
-						})
-						// Set child to the last used instance
-						child = child.Next.Next
-					} else {
-						// break out of the inner loop once we've read in all
-						// EnvironmentVariable(s)
-						break
-					}
-				}
+				child = parseEnvironmentVariables(child, &tpl)
 			case "expose":
-				for {
-					if child.Next != nil {
-						containerPort, err := strconv.Atoi(child.Next.Value)
-						utils.PanicOnErr(err)
-						tpl.Context.ImagePorts = append(tpl.Context.ImagePorts, types.Port{
-							Container:   containerPort,
-							Host:        0,
-							Description: "TODO",
-						})
-						child = child.Next
-					} else {
-						// break out of the inner loop once we've read in all
-						// EnvironmentVariable(s)
-						break
-					}
-				}
-
+				child = parseExpose(child, &tpl)
 			case "volume":
-				for {
-					if child.Next != nil {
-						tpl.Context.ImageVolumes = append(tpl.Context.ImageVolumes, types.Volume{
-							Container:   child.Next.Value,
-							Host:        "TODO",
-							Description: "TODO",
-						})
-						child = child.Next
-					} else {
-						// break out of the inner loop once we've read in all
-						// EnvironmentVariable(s)
-						break
-					}
-				}
-
+				child = parseVolume(child, &tpl)
 			case "label":
-				for {
-					if child.Next != nil {
-						switch child.Next.Value {
-						case "maintainer":
-							tpl.Context.ImageAuthor = utils.StripQuotes(utils.StripEmail(child.Next.Next.Value))
-						case "summary":
-							tpl.Context.ImageShortDescription = utils.StripQuotes(child.Next.Next.Value)
-						case "name":
-							tpl.Context.ImageName = utils.StripQuotes(child.Next.Next.Value)
-						case "usage":
-							tpl.Context.ImageUsage = utils.StripQuotes(child.Next.Next.Value)
-						case "url":
-							tpl.Context.ImageSeeAlso = utils.StripQuotes(child.Next.Next.Value)
-						}
-						child = child.Next.Next
-					} else {
-						// break out of the inner loop once we've read in all
-						break
-					}
-				}
+				child = parseLabel(child, &tpl)
 			}
 		}
 		// Move to the next node if one exists. Else break out of the loop.
@@ -115,4 +50,83 @@ func DockerfileCommand(dockerfilePath, template, basename string) {
 	}
 	// Write out the markdown file
 	tpl.WriteMarkdown(basename)
+}
+
+func parseEnvironmentVariables(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
+	for {
+		if child.Next != nil {
+			// Append to EnvironmentVariable container
+			tpl.Context.ImageEnvironmentVariables = append(tpl.Context.ImageEnvironmentVariables, types.EnvironmentVariable{
+				Name:        child.Next.Value,
+				Default:     child.Next.Next.Value,
+				Description: "TODO",
+			})
+			// Set child to the last used instance
+			child = child.Next.Next
+		} else {
+			// break out of the inner loop once we've read in all environment variables
+			break
+		}
+	}
+	return child
+}
+
+func parseExpose(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
+	for {
+		if child.Next != nil {
+			containerPort, err := strconv.Atoi(child.Next.Value)
+			utils.PanicOnErr(err)
+			tpl.Context.ImagePorts = append(tpl.Context.ImagePorts, types.Port{
+				Container:   containerPort,
+				Host:        0,
+				Description: "TODO",
+			})
+			child = child.Next
+		} else {
+			// break out of the inner loop once we've read in all exposes
+			break
+		}
+	}
+	return child
+}
+
+func parseVolume(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
+	for {
+		if child.Next != nil {
+			tpl.Context.ImageVolumes = append(tpl.Context.ImageVolumes, types.Volume{
+				Container:   child.Next.Value,
+				Host:        "TODO",
+				Description: "TODO",
+			})
+			child = child.Next
+		} else {
+			// break out of the inner loop once we've read in all volumes
+			break
+		}
+	}
+	return child
+}
+
+func parseLabel(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
+	for {
+		if child.Next != nil {
+			switch child.Next.Value {
+			case "maintainer":
+				tpl.Context.ImageAuthor = utils.StripQuotes(utils.StripEmail(child.Next.Next.Value))
+			case "summary":
+				tpl.Context.ImageShortDescription = utils.StripQuotes(child.Next.Next.Value)
+			case "name":
+				tpl.Context.ImageName = utils.StripQuotes(child.Next.Next.Value)
+			case "usage":
+				tpl.Context.ImageUsage = utils.StripQuotes(child.Next.Next.Value)
+			case "url":
+				tpl.Context.ImageSeeAlso = utils.StripQuotes(child.Next.Next.Value)
+			}
+			child = child.Next.Next
+		} else {
+			// break out of the inner loop once we've read in all
+			break
+		}
+	}
+	return child
 }
