@@ -72,6 +72,13 @@ test_command 0 ./image-helpgen man -basename /tmp/e2e
 # Failures
 test_command 1 ./image-helpgen man -basename idonotexist
 
+# 
+# version subcommand
+#
+# Successes
+test_command 0 ./image-helpgen version
+test_command 0 ./image-helpgen version -verbose
+
 
 # Summary
 summary

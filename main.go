@@ -24,7 +24,12 @@ import (
 	"github.com/ashcrow/image-helpgen/utils"
 )
 
+// The following are passed in at build time
 var defaultTemplate string
+var commitHash string
+var version string
+
+// ----
 
 func printHelp() {
 	fmt.Printf("Usage: %s <command> [args]\n", os.Args[0])
@@ -32,6 +37,7 @@ func printHelp() {
 	fmt.Println("  guide: Asks for input and builds markdown and man output")
 	fmt.Println("  dockerfile: Parses a Dockerfile and generates a markdown template")
 	fmt.Println("  man: Generate man page off of a previously filled out markdown template")
+	fmt.Println("  version: Show version information and exit")
 }
 
 // main function for CLI
@@ -39,6 +45,7 @@ func main() {
 	var template string
 	var basename string
 	var dockerfilePath string
+	var verbose bool
 
 	// Setup subcommand parsers
 	guideCmd := flag.NewFlagSet("guide", flag.ExitOnError)
@@ -59,6 +66,10 @@ func main() {
 	manCmd := flag.NewFlagSet("man", flag.ExitOnError)
 	manCmd.StringVar(
 		&basename, "basename", "help", "Base name to use for file writing")
+
+	versionCmd := flag.NewFlagSet("version", flag.ExitOnError)
+	versionCmd.BoolVar(
+		&verbose, "verbose", false, "Show verbose version information")
 
 	// If we have no subcommand then print help and exit
 	if len(os.Args) == 1 {
@@ -86,6 +97,14 @@ func main() {
 	case "man":
 		manCmd.Parse(os.Args[2:])
 		utils.WriteManFromMd(basename)
+	case "version":
+		versionCmd.Parse(os.Args[2:])
+		if verbose == true {
+			fmt.Printf("Version: %s\n", version)
+			fmt.Printf("Commit: %s\n", commitHash)
+		} else {
+			fmt.Println(version)
+		}
 	default:
 		printHelp()
 		fmt.Printf("Error: %s is not a valid command\n", os.Args[1])
