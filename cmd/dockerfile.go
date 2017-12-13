@@ -11,21 +11,30 @@ import (
 
 // DockerfileCommand executes the logic that is exposed via the cli at
 // image-helpgen dockerfile [args]
-func DockerfileCommand(dockerfilePath, template, basename string) {
+func DockerfileCommand(dockerfilePath, template, basename string) error {
 	file, err := os.Open(dockerfilePath)
 	defer file.Close()
 
-	utils.ExitOnErr(err)
+	if err != nil {
+		return err
+	}
 	d := parser.Directive{
 		EscapeSeen:           false,
 		LookingForDirectives: true,
 	}
 	parser.SetEscapeToken(parser.DefaultEscapeToken, &d)
 	node, err := parser.Parse(file, &d)
-	utils.ExitOnErr(err)
+	if err != nil {
+		return err
+	}
 
 	n := node
-	tpl := types.NewTemplateRenderer(template)
+	tpl, err := types.NewTemplateRenderer(template)
+
+	if err != nil {
+		return err
+	}
+
 	tpl.Context.ImageLongDescription = "TODO"
 
 	for {
@@ -50,6 +59,7 @@ func DockerfileCommand(dockerfilePath, template, basename string) {
 	}
 	// Write out the markdown file
 	tpl.WriteMarkdown(basename)
+	return nil
 }
 
 func parseEnvironmentVariables(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {

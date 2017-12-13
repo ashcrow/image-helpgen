@@ -71,10 +71,18 @@ func main() {
 	switch os.Args[1] {
 	case "guide":
 		guideCmd.Parse(os.Args[2:])
-		cmd.GuideCommand(template, basename)
+		err := cmd.GuideCommand(template, basename)
+		if err != nil {
+			guideCmd.PrintDefaults()
+			utils.ExitOnErr(err)
+		}
 	case "dockerfile":
 		dockerfileCmd.Parse(os.Args[2:])
-		cmd.DockerfileCommand(dockerfilePath, template, basename)
+		err := cmd.DockerfileCommand(dockerfilePath, template, basename)
+		if err != nil {
+			dockerfileCmd.PrintDefaults()
+			utils.ExitOnErr(err)
+		}
 	case "man":
 		manCmd.Parse(os.Args[2:])
 		utils.WriteManFromMd(basename)

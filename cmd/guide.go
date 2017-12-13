@@ -11,8 +11,11 @@ import (
 
 // GuideCommand executes the logic that is exposed via the cli at
 // image-helpgen guide [args]
-func GuideCommand(template, basename string) {
-	tr := types.NewTemplateRenderer(template)
+func GuideCommand(template, basename string) error {
+	tr, err := types.NewTemplateRenderer(template)
+	if err != nil {
+		return err
+	}
 	tr.Context.ImageName = ReadString(&tr, "Image Name")
 	tr.Context.ImageAuthor = ReadString(&tr, "Image Author")
 	tr.Context.ImageShortDescription = ReadString(&tr, "Short Description")
@@ -25,6 +28,7 @@ func GuideCommand(template, basename string) {
 
 	tr.Context.ImageDocDate = utils.GenerateDocDate()
 	tr.Write(basename)
+	return nil
 }
 
 // ReadString reads a single string and returns the result

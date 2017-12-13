@@ -54,21 +54,23 @@ type TemplateRenderer struct {
 }
 
 // NewTemplateRenderer creates a new TemplateRenderer instance and returns it.
-func NewTemplateRenderer(tf string) TemplateRenderer {
+func NewTemplateRenderer(tf string) (TemplateRenderer, error) {
 	tr := TemplateRenderer{}
 	var err error
 	tr.Template, err = template.ParseFiles(tf)
-	utils.ExitOnErr(err)
+	if err != nil {
+		return TemplateRenderer{}, err
+	}
 
 	tr.Reader = bufio.NewReader(os.Stdin)
 	tr.Context = TplContext{
 		ImageDocDate: utils.GenerateDocDate(),
 	}
-	return tr
+	return tr, nil
 }
 
 // WriteMarkdown writes a markdown version of the output.
-func (t *TemplateRenderer) WriteMarkdown(basename string) {
+func (t *TemplateRenderer) WriteMarkdown(basename string) error {
 	data := []byte{}
 	out := bytes.NewBuffer(data)
 	fileName := basename + ".md"
@@ -76,7 +78,10 @@ func (t *TemplateRenderer) WriteMarkdown(basename string) {
 	t.Template.Execute(out, t.Context)
 	// Write out the markdown
 	err := ioutil.WriteFile(fileName, out.Bytes(), 0644)
-	utils.ExitOnErr(err)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // WriteMan writes rendered man file based off the markdown file.

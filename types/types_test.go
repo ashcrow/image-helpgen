@@ -7,18 +7,18 @@ import (
 )
 
 func TestNewTemplateRenderer(t *testing.T) {
-	NewTemplateRenderer("../template.tpl")
-	// recover for upcoming expected panic
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("panic did not occur when it should have")
-		}
-	}()
-	NewTemplateRenderer("")
+	_, err := NewTemplateRenderer("../template.tpl")
+	if err != nil {
+		t.Error("Error returned when not expected")
+	}
+	_, err = NewTemplateRenderer("")
+	if err == nil {
+		t.Error("Error not returned but expected")
+	}
 }
 
 func writeMarkdown() (string, string) {
-	tr := NewTemplateRenderer("../template.tpl")
+	tr, _ := NewTemplateRenderer("../template.tpl")
 	tmpFile, _ := ioutil.TempFile("", "")
 	expectedMdPath := tmpFile.Name() + ".md"
 	tr.WriteMarkdown(tmpFile.Name())
@@ -36,12 +36,12 @@ func TestWriteMan(t *testing.T) {
 	defer os.Remove(tmpPath)
 	defer os.Remove(mdPath)
 	defer os.Remove(tmpPath + ".1")
-	tr := NewTemplateRenderer("../template.tpl")
+	tr, _ := NewTemplateRenderer("../template.tpl")
 	tr.WriteMarkdown(tmpPath)
 }
 
 func TestWrite(t *testing.T) {
-	tr := NewTemplateRenderer("../template.tpl")
+	tr, _ := NewTemplateRenderer("../template.tpl")
 	tmpFile, _ := ioutil.TempFile("", "")
 	expectedMdPath := tmpFile.Name() + ".md"
 	expectedManPath := tmpFile.Name() + ".1"
