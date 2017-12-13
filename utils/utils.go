@@ -3,16 +3,18 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/cpuguy83/go-md2man/md2man"
 )
 
-// PanicOnErr is a shortcut to painic when an error is returned
-func PanicOnErr(e error) {
+// ExitOnErr prints the error and exits
+func ExitOnErr(e error) {
 	if e != nil {
-		panic(e)
+		fmt.Fprintf(os.Stderr, "%s.\nExiting...\n", e)
+		os.Exit(1)
 	}
 }
 
@@ -20,11 +22,11 @@ func PanicOnErr(e error) {
 func WriteManFromMd(basename string) {
 	// buffer to hold the rendered result
 	mdData, err := ioutil.ReadFile(basename + ".md")
-	PanicOnErr(err)
+	ExitOnErr(err)
 	// Write out the man file
 	man := md2man.Render(mdData)
 	err = ioutil.WriteFile(basename+".1", man, 0644)
-	PanicOnErr(err)
+	ExitOnErr(err)
 }
 
 // StripEmail removes an email address from a string.

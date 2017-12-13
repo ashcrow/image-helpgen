@@ -58,7 +58,7 @@ func NewTemplateRenderer(tf string) TemplateRenderer {
 	tr := TemplateRenderer{}
 	var err error
 	tr.Template, err = template.ParseFiles(tf)
-	utils.PanicOnErr(err)
+	utils.ExitOnErr(err)
 
 	tr.Reader = bufio.NewReader(os.Stdin)
 	tr.Context = TplContext{
@@ -76,7 +76,7 @@ func (t *TemplateRenderer) WriteMarkdown(basename string) {
 	t.Template.Execute(out, t.Context)
 	// Write out the markdown
 	err := ioutil.WriteFile(fileName, out.Bytes(), 0644)
-	utils.PanicOnErr(err)
+	utils.ExitOnErr(err)
 }
 
 // WriteMan writes rendered man file based off the markdown file.

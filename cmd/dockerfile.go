@@ -15,14 +15,14 @@ func DockerfileCommand(dockerfilePath, template, basename string) {
 	file, err := os.Open(dockerfilePath)
 	defer file.Close()
 
-	utils.PanicOnErr(err)
+	utils.ExitOnErr(err)
 	d := parser.Directive{
 		EscapeSeen:           false,
 		LookingForDirectives: true,
 	}
 	parser.SetEscapeToken(parser.DefaultEscapeToken, &d)
 	node, err := parser.Parse(file, &d)
-	utils.PanicOnErr(err)
+	utils.ExitOnErr(err)
 
 	n := node
 	tpl := types.NewTemplateRenderer(template)
@@ -75,7 +75,7 @@ func parseExpose(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 	for {
 		if child.Next != nil {
 			containerPort, err := strconv.Atoi(child.Next.Value)
-			utils.PanicOnErr(err)
+			utils.ExitOnErr(err)
 			tpl.Context.ImagePorts = append(tpl.Context.ImagePorts, types.Port{
 				Container:   containerPort,
 				Host:        0,

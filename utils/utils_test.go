@@ -5,23 +5,30 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
 )
 
-func TestPanicOnErr(t *testing.T) {
-	// Should not panic
-	PanicOnErr(nil)
-	// recover for upcoming panic test
-	defer func() {
-		if r := recover(); r == nil {
-			t.Error("panic did not occur when it should have")
-		}
-	}()
-	// PANIC!!!
-	PanicOnErr(errors.New("error"))
+// TestExitOnErr verifies that if an error is passed in the execution exits.
+// Based off https://stackoverflow.com/questions/26225513/how-to-test-os-exit-scenarios-in-go
+func TestExitOnErr(t *testing.T) {
+	if os.Getenv("EXIT_TEST") == "1" {
+		ExitOnErr(errors.New("error"))
+		return
+	}
+	cmd := exec.Command(os.Args[0], "-test.run=TestExitOnErr")
+	cmd.Env = append(os.Environ(), "EXIT_TEST=1")
+	err := cmd.Run()
+	if e, ok := err.(*exec.ExitError); ok && !e.Success() {
+		return
+	}
+	// Exit case
+	t.Fatalf("process ran with err %v, want exit status 1", err)
+	// Non exit case
+	ExitOnErr(nil)
 }
 
 func TestStripEmail(t *testing.T) {
@@ -95,14 +102,3 @@ func TestWriteManFromMd(t *testing.T) {
 		t.Errorf("The man page was not generated")
 	}
 }
-
-// func WriteManFromMd(basename string) {
-// 	// buffer to hold the rendered result
-// 	mdData, err := ioutil.ReadFile(basename + ".md")
-// 	PanicOnErr(err)
-// 	// Write out the man file
-// 	man := md2man.Render(mdData)
-// 	err = ioutil.WriteFile(basename+".1", man, 0644)
-// 	PanicOnErr(err)
-// }
-//
