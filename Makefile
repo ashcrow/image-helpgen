@@ -29,7 +29,7 @@ help:
 	@echo " - COMMIT_HASH: Generally not overridden. The git hash the code was built from. Set to: ${COMMIT_HASH}"
 	@echo " - BUILD_TIME: Generally not overridden. The unix time of the build. Set to: ${BUILD_TIME}"
 
-build:
+build: clean
 	go build -ldflags '${LDFLAGS}' -o image-helpgen main.go
 	strip image-helpgen
 
