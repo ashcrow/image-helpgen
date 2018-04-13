@@ -42,6 +42,8 @@ type TplContext struct {
 	ImageEnvironmentVariables []EnvironmentVariable
 	ImageVolumes              []Volume
 	ImagePorts                []Port
+	ImageExpectedCaps         []string
+	ImageExpectedDaemon       bool
 	ImageSeeAlso              string
 }
 
