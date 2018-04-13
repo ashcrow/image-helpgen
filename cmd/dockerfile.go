@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/ashcrow/image-helpgen/types"
 	"github.com/ashcrow/image-helpgen/utils"
@@ -117,6 +118,29 @@ func parseVolume(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 	return child
 }
 
+// parseUsage parses the usage string pulling out specific expectations
+// and adding them to the template context.
+func parseUsage(tpl *types.TemplateRenderer) {
+	tpl.Context.ImageExpectedDaemon = false
+	if strings.Index(tpl.Context.ImageUsage, "-d ") > 0 {
+		tpl.Context.ImageExpectedDaemon = true
+	}
+
+	args := strings.Split(tpl.Context.ImageUsage, " ")
+	tpl.Context.ImageExpectedCaps = []string{}
+	cap_next := false
+	for _, item := range args {
+		if cap_next == true {
+			tpl.Context.ImageExpectedCaps = append(tpl.Context.ImageExpectedCaps, item)
+			cap_next = false
+		} else if strings.HasPrefix(item, "--cap-add=") {
+			tpl.Context.ImageExpectedCaps = append(tpl.Context.ImageExpectedCaps, item[10:])
+		} else if item == "--cap-add" {
+			cap_next = true
+		}
+	}
+}
+
 func parseLabel(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 	for {
 		if child.Next != nil {
@@ -129,6 +153,7 @@ func parseLabel(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 				tpl.Context.ImageName = utils.StripQuotes(child.Next.Next.Value)
 			case "usage":
 				tpl.Context.ImageUsage = utils.StripQuotes(child.Next.Next.Value)
+				parseUsage(tpl)
 			case "url":
 				tpl.Context.ImageSeeAlso = utils.StripQuotes(child.Next.Next.Value)
 			}
