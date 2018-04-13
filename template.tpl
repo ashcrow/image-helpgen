@@ -37,6 +37,12 @@ during initialization be passing `-e VAR=VALUE` to the Docker run command.
 {{ range $_, $_data := .ImageVolumes }}| {{ $_data.Container }} | {{ $_data.Host }} | {{ $_data.Description }} |
 {{ end }}
 
+{{ if .ImageExpectedDaemon }}## Daemon
+This image is expected to be run as a daemon{{ end }}
+{{ if .ImageExpectedCaps }}
+## Expected Capabilities{{ range $_, $_cap := .ImageExpectedCaps }}
+- {{ $_cap }}{{ end }}
+{{ end}}
 
 # SEE ALSO
 {{ .ImageSeeAlso }}
