@@ -23,7 +23,7 @@ before_script:
 script:
   - make lint
   - make deps
-  - govendor list
+  - dep status
   - make test
   - make build
   - make e2e
