@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bufio"
 	"os"
 	"strconv"
 	"strings"
@@ -36,7 +37,12 @@ func DockerfileCommand(dockerfilePath, template, basename string) error {
 		return err
 	}
 
-	tpl.Context.ImageLongDescription = "TODO"
+	// parse and set the ImageLongDescription if it exists in the Dockerfile
+	if err = parseLongDescription(&tpl, dockerfilePath); err != nil {
+		if err.Error() != "EOF" {
+			return err
+		}
+	}
 
 	for {
 		for _, child := range n.Children {
@@ -164,4 +170,56 @@ func parseLabel(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 		}
 	}
 	return child
+}
+
+// parseLongDescription parses the start of the Dockerfile and turning the
+// starting comment(s) into the LongDescription.
+func parseLongDescription(tpl *types.TemplateRenderer, dockerfilePath string) error {
+	file, err := os.OpenFile(dockerfilePath, os.O_RDONLY, os.ModePerm)
+	defer file.Close()
+	if err != nil {
+		return err
+	}
+
+	// Get a reader that lets us go by lines
+	r := bufio.NewReader(file)
+	prevLine := ""
+	hashFound := false
+
+	for {
+		lineBytes, isPrefix, err := r.ReadLine()
+		line := string(lineBytes)
+		if err != nil {
+			return err
+		}
+
+		// If this is a prefix for a line, add it to prevLine and continue
+		if isPrefix {
+			prevLine = prevLine + line
+			continue
+			// if prevLine is not empty then use it
+		} else if prevLine != "" {
+			tpl.Context.ImageLongDescription = tpl.Context.ImageLongDescription + prevLine
+			prevLine = ""
+		}
+
+		// If we get here we need to ensure the line starts with a hash
+		if strings.HasPrefix(line, "#") {
+			hashFound = true
+			line = strings.Trim(line, "#")
+			if line == "" {
+				// If it's an empty line that started with a hash then we treat
+				// it like the start of a new paragraph.
+				tpl.Context.ImageLongDescription = tpl.Context.ImageLongDescription + "\n\n"
+			} else {
+				tpl.Context.ImageLongDescription = tpl.Context.ImageLongDescription + line
+			}
+		} else if hashFound {
+			// If we had found hashes and no longer have them we assume this is
+			// the end of the LongDescription block.
+			break
+		}
+		// If it doesn't end with a has we s
+	}
+	return nil
 }
