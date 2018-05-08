@@ -1,16 +1,18 @@
 % $FGC/some-componenet(2) Container Image Pages
 % Steve Milner
-% December 2017
+% May 2018
 
 # NAME
 $FGC/some-componenet - A key-value store for shared configuration and service discovery.
 
 # DESCRIPTION
-TODO
+Long description documentation comes from the comments at the start of the Dockerfile. Note that spaces at the end of the line one each comment may be needed for formatting. 
+
+If you want to have a second paragraph then add a comment line with nothing on it.
 
 
 # USAGE
-/usr/bin/docker run -d -p 4001:4001 -p 7001:7001 -p 2379:2379 -p 2380:2380
+/usr/bin/docker run --cap-add NET_ADMIN -d --cap-add=SYS_ADMIN  -p 4001:4001 -p 7001:7001 -p 2379:2379 -p 2380:2380
 
 # ENVIRONMENT VARIABLES
 
@@ -44,6 +46,13 @@ during initialization be passing `-e VAR=VALUE` to the Docker run command.
 | /else | TODO | TODO |
 | /another | TODO | TODO |
 
+
+## Daemon
+This image is expected to be run as a daemon
+
+## Expected Capabilities
+- NET_ADMIN
+- SYS_ADMIN
 
 
 # SEE ALSO

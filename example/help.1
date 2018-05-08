@@ -1,4 +1,4 @@
-.TH "$FGC/some-componenet" "2" " Container Image Pages" "Steve Milner" "December 2017" 
+.TH "$FGC/some-componenet" "2" " Container Image Pages" "Steve Milner" "May 2018" 
 .nh
 .ad l
 
@@ -10,12 +10,15 @@ $FGC/some\-componenet \- A key\-value store for shared configuration and service
 
 .SH DESCRIPTION
 .PP
-TODO
+Long description documentation comes from the comments at the start of the Dockerfile. Note that spaces at the end of the line one each comment may be needed for formatting.
+
+.PP
+If you want to have a second paragraph then add a comment line with nothing on it.
 
 
 .SH USAGE
 .PP
-/usr/bin/docker run \-d \-p 4001:4001 \-p 7001:7001 \-p 2379:2379 \-p 2380:2380
+/usr/bin/docker run \-\-cap\-add NET\_ADMIN \-d \-\-cap\-add=SYS\_ADMIN  \-p 4001:4001 \-p 7001:7001 \-p 2379:2379 \-p 2380:2380
 
 
 .SH ENVIRONMENT VARIABLES
@@ -58,6 +61,15 @@ l l l .
 /else	TODO	TODO
 /another	TODO	TODO
 .TE
+
+.SH Daemon
+.PP
+This image is expected to be run as a daemon
+
+.SH Expected Capabilities.IP \(bu 2
+NET\_ADMIN
+.IP \(bu 2
+SYS\_ADMIN
 
 
 .SH SEE ALSO

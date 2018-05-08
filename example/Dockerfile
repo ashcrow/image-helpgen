@@ -1,3 +1,9 @@
+#Long description documentation comes from the comments 
+#at the start of the Dockerfile. Note that spaces at the end of the line 
+#one each comment may be needed for formatting. 
+#
+#If you want to have a second paragraph then add a comment line with nothing 
+#on it.
 FROM registry.fedoraproject.org/fedora:rawhide
 
 ENV VERSION=0.1 RELEASE=10 ARCH=x86_64
