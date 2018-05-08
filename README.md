@@ -7,10 +7,10 @@ Generates image help and man files based on input. Initial idea from [atomic-wg]
 See [/example](/example) for an example run generating a``Dockerfile`` to ``help.md`` and ``help.1``.
 
 ## Build
-**Note**: ``image-helpgen`` uses [govendor](https://github.com/kardianos/govendor)
+**Note**: ``image-helpgen`` uses [dep](https://github.com/golang/dep/)
 
 ```
-$ make deps  # Installs govendor and pulls deps in
+$ make deps  # Installs dep and pulls deps in
 $ make build # Builds binary
 $ ls image*
 image-helpgen

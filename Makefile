@@ -37,8 +37,8 @@ clean:
 	rm -f image-helpgen
 
 deps:
-	go get -u github.com/kardianos/govendor
-	govendor sync
+	go get -u github.com/golang/dep/cmd/dep
+	dep ensure -v
 
 install: clean build
 	install -d ${PREFIX}${CONFIG_DIR}/image-helpgen/
@@ -52,7 +52,7 @@ lint:
 
 
 test:
-	go list ./... | grep -v vendor | xargs govendor test -v
+	go list ./... | grep -v vendor | xargs go test -v
 
 e2e: build
 	./e2e.sh
