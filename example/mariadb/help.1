@@ -1,0 +1,124 @@
+.TH "rhscl/mariadb-102-rhel7" "2" " Container Image Pages" "SoftwareCollections.org" "May 2018" 
+.nh
+.ad l
+
+
+.SH NAME
+.PP
+rhscl/mariadb\-102\-rhel7 \- MariaDB 10.2 SQL database server
+
+
+.SH DESCRIPTION
+.PP
+MariaDB is a multi\-user, multi\-threaded SQL database server. The container image provides a containerized packaging of the MariaDB mysqld daemon and client application. The mysqld server daemon accepts connections from clients and provides access to content from MariaDB databases on behalf of the clients.
+
+.PP
+This image must forever use UID 27 for mysql user so our volumes are safe in the future. This should \fInever\fP change, the last test is there to make sure of that.
+
+.PP
+Volumes:
+
+.PP
+/var/lib/mysql/data \- Datastore for MySQL
+
+.PP
+Environment:
+
+.PP
+$MYSQL\_USER \- Database user name
+
+.PP
+$MYSQL\_PASSWORD \- User's password
+
+.PP
+$MYSQL\_DATABASE \- Name of the database to create
+
+.PP
+$MYSQL\_ROOT\_PASSWORD (Optional) \- Password for the 'root' MySQL account
+
+
+.SH USAGE
+.PP
+docker run \-d \-e MYSQL\_USER=user \-e MYSQL\_PASSWORD=pass \-e MYSQL\_DATABASE=db \-p 3306:3306 rhscl/mariadb\-102\-rhel7
+
+
+.SH ENVIRONMENT VARIABLES
+.PP
+The image recognizes the following environment variables that you can set
+during initialization by passing \fB\fC\-e VAR=VALUE\fR to the \fB\fCdocker run\fR command.
+
+.TS
+allbox;
+l l l 
+l l l .
+\fB\fCVariable name\fR	\fB\fCDefault\fR	\fB\fCDescription\fR
+\fB\fCMYSQL\_VERSION\fR	\fB\fC10.2\fR	Current MySQL version number
+\fB\fCAPP\_DATA\fR	\fB\fC/opt/app\-root/src\fR	T{
+Data directory used by database
+T}
+T{
+\fB\fCCONTAINER\_SCRIPTS\_PATH\fR
+T}	T{
+\fB\fC/usr/share/container\-scripts/mysql\fR
+T}	Path to mysql script
+\fB\fCMYSQL\_PREFIX\fR	T{
+\fB\fC/opt/rh/rh\-mariadb102/root/usr\fR
+T}	Prefix for MySQL usr directory
+\fB\fCENABLED\_COLLECTIONS\fR	\fB\fCrh\-mariadb102\fR	Software collections name
+\fB\fCBASH\_ENV\fR	T{
+\fB\fC${CONTAINER\_SCRIPTS\_PATH}/scl\_enable\fR
+T}	T{
+Path to enable software collections
+T}
+\fB\fCENV\fR	T{
+\fB\fC${CONTAINER\_SCRIPTS\_PATH}/scl\_enable\fR
+T}	T{
+Path to enable software collections
+T}
+\fB\fCPROMPT\_COMMAND\fR	T{
+\fB\fC\&#34;. ${CONTAINER\_SCRIPTS\_PATH}/scl\_enable\&#34;\fR
+T}	Shell prompt
+.TE
+
+
+.SH SECURITY IMPLICATIONS
+.PP
+The following sections describe potential security issues related to how the container image was designed to run.
+
+.SH Ports
+.PP
+Exposed TCP (default) or UDP ports that the container listens on at runtime include the following:
+
+.TS
+allbox;
+l l l 
+l l l .
+\fB\fCPort Container\fR	\fB\fCPort Host\fR	\fB\fCDescription\fR
+3306	3306	T{
+TCP port used to access mariadb service
+T}
+.TE
+
+.SH Volumes
+.PP
+Directories that are mounted from the host system to a mount point inside the container include the following:
+
+.TS
+allbox;
+l l l 
+l l l .
+\fB\fCVolume Container\fR	\fB\fCVolume Host\fR	\fB\fCDescription\fR
+/var/lib/mysql/data	/var/lib/mysql/data	T{
+Database data directory mounted from host
+T}
+.TE
+
+.SH Daemon
+.PP
+This image is expected to be run as a daemon
+
+
+.SH SEE ALSO
+.PP
+(
+\[la]https://access.redhat.com/documentation/en-us/red_hat_software_collections/3/html-single/using_red_hat_software_collections_container_images/#mariadb\[ra])
