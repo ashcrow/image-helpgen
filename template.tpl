@@ -25,24 +25,23 @@ during initialization by passing `-e VAR=VALUE` to the `docker run` command.
 # SECURITY IMPLICATIONS
 The following sections describe potential security issues related to how the container image was designed to run.
 
-## Ports
+{{ if .ImagePorts }}## Ports
 
 Exposed TCP (default) or UDP ports that the container listens on at runtime include the following:
 
 |     Port Container | Port Host  |       Description             |
 | :----------------- | -----------|-------------------------------|
 {{ range $_, $_data := .ImagePorts }}| {{ $_data.Container }} | {{ $_data.Host }} | {{ $_data.Description }} |
-{{ end }}
+{{ end }}{{ end }}
 
-
-## Volumes
+{{ if .ImageVolumes }}## Volumes
 
 Directories that are mounted from the host system to a mount point inside the container include the following:
 
 |     Volume Container | Volume Host  |       Description             |
 | :----------------- | -----------|-------------------------------|
 {{ range $_, $_data := .ImageVolumes }}| {{ $_data.Container }} | {{ $_data.Host }} | {{ $_data.Description }} |
-{{ end }}
+{{ end }}{{ end }}
 
 {{ if .ImageExpectedDaemon }}## Daemon
 This image is expected to be run as a daemon{{ end }}
