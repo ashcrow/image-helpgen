@@ -44,7 +44,7 @@ type TplContext struct {
 	ImagePorts                []Port
 	ImageExpectedCaps         []string
 	ImageExpectedDaemon       bool
-	ImageSeeAlso              string
+	ImageSeeAlso              []string
 }
 
 // TemplateRenderer provides a structure for working with a template and then
