@@ -56,4 +56,5 @@ This container needs to open one or more Linux capabilities (see `man capabiliti
 {{ end}}
 
 # SEE ALSO
-{{ .ImageSeeAlso }}
+{{ range $_, $_also := .ImageSeeAlso }}
+{{ $_also }}{{ end }}
