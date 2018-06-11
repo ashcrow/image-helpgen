@@ -15,7 +15,8 @@ LABEL com.redhat.component="some-compoenent" \
       summary="A key-value store for shared configuration and service discovery." \
       maintainer="Steve Milner <smilner@example.org>" \
       usage="/usr/bin/docker run --cap-add NET_ADMIN -d --cap-add=SYS_ADMIN  -p 4001:4001 -p 7001:7001 -p 2379:2379 -p 2380:2380" \
-      url="http://example.org/asd/asd"
+      url="http://example.org/asd/asd" \
+      url="http://example.org/sdgfsdf"
 
 RUN dnf -y --setopt=tsflags=nodocs install etcd hostname && \
     dnf clean all
