@@ -161,7 +161,7 @@ func parseLabel(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 				tpl.Context.ImageUsage = utils.StripQuotes(child.Next.Next.Value)
 				parseUsage(tpl)
 			case "url":
-				tpl.Context.ImageSeeAlso = utils.StripQuotes(child.Next.Next.Value)
+				tpl.Context.ImageSeeAlso = append(tpl.Context.ImageSeeAlso, utils.StripQuotes(child.Next.Next.Value))
 			}
 			child = child.Next.Next
 		} else {
