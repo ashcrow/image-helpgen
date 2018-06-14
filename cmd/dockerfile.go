@@ -134,15 +134,15 @@ func parseUsage(tpl *types.TemplateRenderer) {
 
 	args := strings.Split(tpl.Context.ImageUsage, " ")
 	tpl.Context.ImageExpectedCaps = []string{}
-	cap_next := false
+	capNext := false
 	for _, item := range args {
-		if cap_next == true {
+		if capNext == true {
 			tpl.Context.ImageExpectedCaps = append(tpl.Context.ImageExpectedCaps, item)
-			cap_next = false
+			capNext = false
 		} else if strings.HasPrefix(item, "--cap-add=") {
 			tpl.Context.ImageExpectedCaps = append(tpl.Context.ImageExpectedCaps, item[10:])
 		} else if item == "--cap-add" {
-			cap_next = true
+			capNext = true
 		}
 	}
 }
