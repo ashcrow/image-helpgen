@@ -29,6 +29,7 @@ test_command() {
     echo -n "Status: "
     echo $?
     if [ $ACTUAL_CODE -ne $EXPECTED_CODE ]; then
+        echo "$ACTUAL_CODE != $EXPECTED_CODE"
         failed
 	FAILED_TESTS="$FAILED_TESTS\n - $CMD"
     else
@@ -61,7 +62,7 @@ test_command 1 ./image-helpgen guide -basename /tmp/e2e
 # Successes
 test_command 0 ./image-helpgen dockerfile -template ./template.tpl -dockerfile example/Dockerfile -basename /tmp/e2e 
 # Failures
-test_command 1 ./image-helpgen dockerfile -template ./template.tpl -basename /tmp/e2e 
+test_command 1 ./image-helpgen dockerfile -template ./template.tpl -dockerfile DOESNOTEXIST -basename /tmp/e2e 
 test_command 1 ./image-helpgen dockerfile -dockerfile example/Dockerfile -basename /tmp/e2e 
 
 # 
