@@ -15,6 +15,7 @@ help:
 	@echo "Targets:"
 	@echo " - build: Build the image-helpgen binary"
 	@echo " - clean: Clean up after build"
+	@echo " - container: Build a containerized version of image-helpgen"
 	@echo " - deps: Install required tool and dependencies for building"
 	@echo " - install: Install build results to the system"
 	@echo " - lint: Run golint"
@@ -35,6 +36,9 @@ build: clean
 
 clean:
 	rm -f image-helpgen
+
+container: build
+	docker build -t image-helpgen:${VERSION} .
 
 deps:
 	go get -u github.com/golang/dep/cmd/dep
