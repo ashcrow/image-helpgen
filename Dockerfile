@@ -16,5 +16,7 @@ VOLUME /data
 COPY image-helpgen /usr/bin/image-helpgen
 COPY image-files/run-in-container.sh /usr/bin/run-in-container.sh
 COPY image-files/image-helpgen.1 /help.1
+RUN mkdir -p /etc/image-helpgen
+COPY template.tpl /etc/image-helpgen/template.tpl
 
 ENTRYPOINT [ "/usr/bin/run-in-container.sh" ]

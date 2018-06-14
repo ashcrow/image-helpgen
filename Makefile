@@ -8,8 +8,9 @@ LDFLAGS := -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.
 
 CONFIG_DIR ?= /etc
 BIN_DIR ?= /usr/bin
+IMAGE_BUILDER :=  $(shell which podman || which docker)
 
-.PHONY: help build clean deps install lint test
+.PHONY: help build clean deps image install lint test
 
 help:
 	@echo "Targets:"
@@ -29,6 +30,7 @@ help:
 	@echo " - VERSION: Generally not overridden. The output of the VERSION file. Set to: ${VERSION}"
 	@echo " - COMMIT_HASH: Generally not overridden. The git hash the code was built from. Set to: ${COMMIT_HASH}"
 	@echo " - BUILD_TIME: Generally not overridden. The unix time of the build. Set to: ${BUILD_TIME}"
+	@echo " - IMAGE_BUILDER: The binary which should create the image. Set to ${IMAGE_BUILDER}"
 
 build: clean
 	go build -ldflags '${LDFLAGS}' -o image-helpgen main.go
@@ -37,8 +39,8 @@ build: clean
 clean:
 	rm -f image-helpgen
 
-container: build
-	docker build -t image-helpgen:${VERSION} .
+image: deps build
+	${IMAGE_BUILDER} build -t image-helpgen:${VERSION} .
 
 deps:
 	go get -u github.com/golang/dep/cmd/dep
