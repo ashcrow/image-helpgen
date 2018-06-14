@@ -7,6 +7,8 @@ Generates image help and man files based on input. Initial idea from [atomic-wg]
 See [/example](/example) for an example run generating a``Dockerfile`` to ``help.md`` and ``help.1``.
 
 ## Build
+
+### Binary
 **Note**: ``image-helpgen`` uses [dep](https://github.com/golang/dep/)
 
 ```
@@ -15,6 +17,16 @@ $ make build # Builds binary
 $ ls image*
 image-helpgen
 ```
+
+### Container Image
+
+**Note**: You will need the `podman` binary or `docker` binary and service to build images.
+
+```
+$ make image # build the container image. Override IMAGE_BUILDER= if you want to use a different build binary than what was found
+
+```
+
 
 ## Install
 **Note**: To see a list of variables which can be overridden run ```make help```
@@ -59,4 +71,9 @@ Image Name: MyImage
 ...
 $ ls myFile*
 myFile.1 myFile.md
+```
+
+### Running in a container
+```
+$ sudo podman run --rm -v `pwd`:/data:z image-helpgen:1.0 dockerfile --dockerfile Dockerfile 
 ```
