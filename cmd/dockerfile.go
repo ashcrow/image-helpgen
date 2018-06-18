@@ -55,6 +55,10 @@ func DockerfileCommand(dockerfilePath, template, basename string) error {
 				child = parseVolume(child, &tpl)
 			case "label":
 				child = parseLabel(child, &tpl)
+			case "entrypoint":
+				child = parseEntrypoint(child, &tpl)
+			case "cmd":
+				child = parseCmd(child, &tpl)
 			}
 		}
 		// Move to the next node if one exists. Else break out of the loop.
@@ -222,4 +226,30 @@ func parseLongDescription(tpl *types.TemplateRenderer, dockerfilePath string) er
 		// If it doesn't end with a has we s
 	}
 	return nil
+}
+
+// parseEntrypoint parses the entrypoint defenition from the Dockerfile
+func parseEntrypoint(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
+	if len(tpl.Context.ImageDefaultCommand) > 0 {
+		tpl.Context.ImageDefaultCommand = child.Next.Value + " " + tpl.Context.ImageDefaultCommand
+	} else {
+		tpl.Context.ImageDefaultCommand = child.Next.Value
+	}
+	return child.Next.Next
+}
+
+// parseCmd parses the cmd defenition from the Dockerfile
+func parseCmd(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
+	if len(tpl.Context.ImageDefaultCommand) > 0 {
+		tpl.Context.ImageDefaultCommand = tpl.Context.ImageDefaultCommand + " " + child.Next.Value
+	} else {
+		tpl.Context.ImageDefaultCommand = child.Next.Value
+	}
+
+	// If we have another
+	if child.Next.Next != nil {
+		child = parseCmd(child.Next, tpl)
+	}
+	return child.Next
+
 }

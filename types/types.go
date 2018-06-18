@@ -36,6 +36,7 @@ type TplContext struct {
 	ImageName                 string
 	ImageAuthor               string
 	ImageDocDate              string
+	ImageDefaultCommand       string
 	ImageShortDescription     string
 	ImageLongDescription      string
 	ImageUsage                string

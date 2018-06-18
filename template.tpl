@@ -12,6 +12,9 @@
 # USAGE
 {{ .ImageUsage }}
 
+{{ if .ImageDefaultCommand }}# Default Command
+{{ .ImageDefaultCommand }}{{ end }}
+
 # ENVIRONMENT VARIABLES
 
 The image recognizes the following environment variables that you can set
