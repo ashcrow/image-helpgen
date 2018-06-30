@@ -34,7 +34,6 @@ var version string
 func printHelp() {
 	fmt.Printf("Usage: %s <command> [args]\n", os.Args[0])
 	fmt.Println("Commands:")
-	fmt.Println("  guide: Asks for input and builds markdown and man output")
 	fmt.Println("  dockerfile: Parses a Dockerfile and generates a markdown template")
 	fmt.Println("  man: Generate man page off of a previously filled out markdown template")
 	fmt.Println("  version: Show version information and exit")
@@ -48,12 +47,6 @@ func main() {
 	var verbose bool
 
 	// Setup subcommand parsers
-	guideCmd := flag.NewFlagSet("guide", flag.ExitOnError)
-	guideCmd.StringVar(
-		&template, "template", defaultTemplate, "Template to use when rendering")
-	guideCmd.StringVar(
-		&basename, "basename", "help", "Base name to use for file writing")
-
 	dockerfileCmd := flag.NewFlagSet("dockerfile", flag.ExitOnError)
 	dockerfileCmd.StringVar(
 		&template, "template", defaultTemplate, "Template to use when rendering")
@@ -80,13 +73,6 @@ func main() {
 	// Otherwise pass off to the subcommand defaulting to help if
 	// the command is not valid
 	switch os.Args[1] {
-	case "guide":
-		guideCmd.Parse(os.Args[2:])
-		err := cmd.GuideCommand(template, basename)
-		if err != nil {
-			guideCmd.PrintDefaults()
-			utils.ExitOnErr(err)
-		}
 	case "dockerfile":
 		dockerfileCmd.Parse(os.Args[2:])
 		err := cmd.DockerfileCommand(dockerfilePath, template, basename)
