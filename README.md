@@ -48,7 +48,6 @@ install --mode 755 image-helpgen /install/root/usr/bin/image-helpgen
 ```
 Usage: ./image-helpgen <command> [args]
 Commands:
-  guide: Asks for input and builds markdown and man output
   dockerfile: Parses a Dockerfile and generates a markdown template
   man: Generate man page off of a previously filled out markdown template
 ```
@@ -62,15 +61,6 @@ $ <edit help.md>
 $ ./image-helpgen man
 $ ls help*
 help.1 help.md
-```
-
-### Guide with a specific template and output files
-```
-$ ./image-helpgen guide -template template.tpl -basename myFile
-Image Name: MyImage
-...
-$ ls myFile*
-myFile.1 myFile.md
 ```
 
 ### Running in a container
