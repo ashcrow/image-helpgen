@@ -67,3 +67,56 @@ help.1 help.md
 ```
 $ sudo podman run --rm -v `pwd`:/data:z image-helpgen:1.0 dockerfile --dockerfile Dockerfile 
 ```
+
+## How to document
+
+### Long Description
+To create a long description for your Dockerfile start the Dockerfile with comments.
+
+*Example*
+
+```
+#This is my long description. This is a single line.
+#
+#Now this is a different line with a newline between.
+#This is the last line and by not providing another comment hash it will be the end of the long description.
+
+[...]
+```
+
+### Environment Variables (`ENV`)
+To document an environment variable:
+
+1. The `ENV` must be on it's own line with only one variable
+2. Place a comment above the `ENV` directive with your description
+
+*Example*
+```
+# Defines the version of this Dockerfile
+ENV DOCKERVERSION="1.2.3"
+```
+
+### Ports (`EXPOSE`)
+To document a port exposures:
+
+1. The `EXPOSE` must be on it's own line with only one port listed
+2. Place a comment above the `EXPOSE` line with $CONTAINERPORT->$HOSTPORT $DESCRIPTION
+
+*Example*
+```
+#8080->80 Provides access to the web server
+EXPOSE 8080
+```
+
+
+### Volumes (`VOLUME`)
+To document a volume:
+
+1. The `VOLUME` must be on it's own line with only one volume listed
+2. Place a commend above the `VOLUME` line with $CONTAINERVOLUME->$HOSTVOLUME $DESCRIPTION
+
+*Example*
+```
+#/rootfs->/ The hosts root filesystem for the container to modify
+VOLUME /rootfs
+```
