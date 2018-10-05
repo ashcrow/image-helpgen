@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -44,15 +45,16 @@ func DockerfileCommand(dockerfilePath, template, basename string) error {
 		}
 	}
 
+	// parse and set documentation which requires comments. This includes EXPOSE, VOLUME, and ENV.
+	err = parseCommentDocumentation(&tpl, dockerfilePath)
+	if err != nil {
+		return err
+	}
+
+	// Parse what we can more efficiently using the official parser
 	for {
 		for _, child := range n.Children {
 			switch child.Value {
-			case "env":
-				child = parseEnvironmentVariables(child, &tpl)
-			case "expose":
-				child = parseExpose(child, &tpl)
-			case "volume":
-				child = parseVolume(child, &tpl)
 			case "label":
 				child = parseLabel(child, &tpl)
 			case "entrypoint":
@@ -71,61 +73,6 @@ func DockerfileCommand(dockerfilePath, template, basename string) error {
 	// Write out the markdown file
 	tpl.WriteMarkdown(basename)
 	return nil
-}
-
-func parseEnvironmentVariables(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
-	for {
-		if child.Next != nil {
-			// Append to EnvironmentVariable container
-			tpl.Context.ImageEnvironmentVariables = append(tpl.Context.ImageEnvironmentVariables, types.EnvironmentVariable{
-				Name:        child.Next.Value,
-				Default:     child.Next.Next.Value,
-				Description: "TODO",
-			})
-			// Set child to the last used instance
-			child = child.Next.Next
-		} else {
-			// break out of the inner loop once we've read in all environment variables
-			break
-		}
-	}
-	return child
-}
-
-func parseExpose(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
-	for {
-		if child.Next != nil {
-			containerPort, err := strconv.Atoi(child.Next.Value)
-			utils.ExitOnErr(err)
-			tpl.Context.ImagePorts = append(tpl.Context.ImagePorts, types.Port{
-				Container:   containerPort,
-				Host:        0,
-				Description: "TODO",
-			})
-			child = child.Next
-		} else {
-			// break out of the inner loop once we've read in all exposes
-			break
-		}
-	}
-	return child
-}
-
-func parseVolume(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
-	for {
-		if child.Next != nil {
-			tpl.Context.ImageVolumes = append(tpl.Context.ImageVolumes, types.Volume{
-				Container:   child.Next.Value,
-				Host:        "TODO",
-				Description: "TODO",
-			})
-			child = child.Next
-		} else {
-			// break out of the inner loop once we've read in all volumes
-			break
-		}
-	}
-	return child
 }
 
 // parseUsage parses the usage string pulling out specific expectations
@@ -252,4 +199,111 @@ func parseCmd(child *parser.Node, tpl *types.TemplateRenderer) *parser.Node {
 	}
 	return child.Next
 
+}
+
+// parseCommentDocumentation takes care of parsing Volume, Port, and Env sections and adding
+// found documentation to the structures.
+func parseCommentDocumentation(tpl *types.TemplateRenderer, dockerfilePath string) error {
+	file, err := os.OpenFile(dockerfilePath, os.O_RDONLY, os.ModePerm)
+	defer file.Close()
+	if err != nil {
+		return nil
+	}
+
+	// Get a reader that lets us go by lines
+	r := bufio.NewReader(file)
+	prevLine := ""
+
+	for {
+		lineBytes, _, err := r.ReadLine()
+		line := string(lineBytes)
+		if err != nil {
+			// If the error is the end of the file, we're done. No true error.
+			if err.Error() == "EOF" {
+				return nil
+			}
+			return err
+		}
+
+		if strings.HasPrefix(line, "EXPOSE") {
+			parseExpose(line, prevLine, tpl)
+		} else if strings.HasPrefix(line, "VOLUME") {
+			parseVolume(line, prevLine, tpl)
+		} else if strings.HasPrefix(line, "ENV") {
+			parseEnv(line, prevLine, tpl)
+		}
+		prevLine = line
+	}
+}
+
+// parseExpose parses an EXPOSE line and attempts to pull in documentation
+func parseExpose(line, prevLine string, tpl *types.TemplateRenderer) {
+	expectedContainerPort, err := strconv.Atoi(line[7:])
+	if err != nil {
+		return
+	}
+	newPort := types.Port{
+		Container:   expectedContainerPort,
+		Host:        0,
+		Description: "No documentation provided",
+	}
+	if strings.HasPrefix(prevLine, "#") {
+		doc := strings.SplitN(strings.Trim(prevLine, "#"), " ", 2)
+		mapping := strings.SplitN(doc[0], "->", 2)
+		containerPort, _ := strconv.Atoi(mapping[0])
+		hostPort, _ := strconv.Atoi(mapping[1])
+		// If the expected port and found doc doesn't match use the expected port
+		// and note in the documentation there is a problem
+		if containerPort != expectedContainerPort {
+			newPort.Description = fmt.Sprintf(
+				"Unknown. Documentation error found. %d != %d", expectedContainerPort, containerPort)
+		} else {
+			// otherwise use the doc as the port
+			newPort.Container = containerPort
+			newPort.Host = hostPort
+			newPort.Description = doc[1]
+		}
+	}
+	tpl.Context.ImagePorts = append(tpl.Context.ImagePorts, newPort)
+}
+
+// parseVolume parses a VOLUME line and attempts to pull in documentation
+func parseVolume(line, prevLine string, tpl *types.TemplateRenderer) {
+	expectedVolume := line[7:]
+	newVolume := types.Volume{
+		Container:   expectedVolume,
+		Host:        "UNKNOWN",
+		Description: "No documentation provided",
+	}
+
+	if strings.HasPrefix(prevLine, "#") {
+		doc := strings.SplitN(strings.Trim(prevLine, "#"), " ", 2)
+		mapping := strings.SplitN(doc[0], "->", 2)
+		containerVolume := mapping[0]
+		hostVolume := mapping[1]
+
+		if expectedVolume != containerVolume {
+			newVolume.Description = fmt.Sprintf(
+				"UNKNOWN. Documentation error. %s != %s", expectedVolume, containerVolume)
+		} else {
+			newVolume.Container = containerVolume
+			newVolume.Host = hostVolume
+			newVolume.Description = doc[1]
+		}
+	}
+	tpl.Context.ImageVolumes = append(tpl.Context.ImageVolumes, newVolume)
+}
+
+// parseEnv parses an ENV line and attempts to pull in documentation
+func parseEnv(line, prevLine string, tpl *types.TemplateRenderer) {
+	mapping := strings.SplitN(line[3:], "=", 2)
+	envVar := types.EnvironmentVariable{
+		Name:        mapping[0],
+		Default:     mapping[1],
+		Description: "No documentation provided",
+	}
+	if strings.HasPrefix(prevLine, "#") {
+		envVar.Description = strings.Trim(prevLine, "#")
+	}
+	tpl.Context.ImageEnvironmentVariables = append(tpl.Context.ImageEnvironmentVariables, envVar)
 }
