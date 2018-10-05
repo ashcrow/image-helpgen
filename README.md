@@ -65,7 +65,7 @@ help.1 help.md
 
 ### Running in a container
 ```
-$ sudo podman run --rm -v `pwd`:/data:z image-helpgen:1.0 dockerfile --dockerfile Dockerfile 
+$ sudo podman run --rm -v `pwd`:/data:z image-helpgen:latest dockerfile --dockerfile Dockerfile 
 ```
 
 ## How to document
