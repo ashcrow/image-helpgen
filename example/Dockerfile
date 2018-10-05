@@ -6,7 +6,13 @@
 #on it.
 FROM registry.fedoraproject.org/fedora:rawhide
 
-ENV VERSION=0.1 RELEASE=10 ARCH=x86_64
+# Denotes the version of this dockerfile
+ENV VERSION=0.1
+# Denotes the release of this dockerfile
+ENV RELEASE=10
+# Denotes the architecture
+ENV ARCH=x86_64
+
 LABEL com.redhat.component="some-compoenent" \
       name="$FGC/some-componenet" \
       version="$VERSION" \
@@ -35,9 +41,22 @@ RUN mkdir -p /exports/hostfs/usr/local/bin/ && cp /usr/bin/etcdctl /exports/host
 
 RUN mkdir -p /exports/hostfs/etc/etcd && sed -e "/^ETCD_DATA_DIR/d" -e s"|^ETCD_NAME=|#ETCD_NAME=|" < /etc/etcd/etcd.conf > /exports/hostfs/etc/etcd/etcd.conf
 
-EXPOSE 4001 7001 2379 2380
+#4001->4001 Use for something
+EXPOSE 4001
+#7001->7001 Used for something else
+EXPOSE 7001
+#2379->2379 Used for the another thing
+EXPOSE 2379
+#2380->2380 Used for the last thing
+EXPOSE 2380
 
-VOLUME /test /something /else
+#/test->/tmp/test A test mount
+VOLUME /test
+#/something->/tmp/something Another test mount
+VOLUME /something
+#/else->/tmp/else The else test mount
+VOLUME /else
+#/another->/var/tmp/another The last test mount
 VOLUME /another
 
 CMD ["/usr/bin/etcd-env.sh", "/usr/bin/etcd"]
