@@ -1,4 +1,4 @@
-.TH "$FGC/some-componenet" "2" " Container Image Pages" "Steve Milner" "May 2018" 
+.TH "$FGC/some-componenet" "2" " Container Image Pages" "Steve Milner" "October 2018" 
 .nh
 .ad l
 
@@ -21,45 +21,63 @@ If you want to have a second paragraph then add a comment line with nothing on i
 /usr/bin/docker run \-\-cap\-add NET\_ADMIN \-d \-\-cap\-add=SYS\_ADMIN  \-p 4001:4001 \-p 7001:7001 \-p 2379:2379 \-p 2380:2380
 
 
+.SH Default Command
+.PP
+/usr/bin/etcd\-env.sh /usr/bin/etcd
+
+
 .SH ENVIRONMENT VARIABLES
 .PP
 The image recognizes the following environment variables that you can set
-during initialization be passing \fB\fC\-e VAR=VALUE\fR to the Docker run command.
+during initialization by passing \fB\fC\-e VAR=VALUE\fR to the \fB\fCdocker run\fR command.
 
 .TS
 allbox;
 l l l 
 l l l .
 \fB\fCVariable name\fR	\fB\fCDefault\fR	\fB\fCDescription\fR
-\fB\fCVERSION\fR	\fB\fC0.1\fR	TODO
-\fB\fCRELEASE\fR	\fB\fC10\fR	TODO
-\fB\fCARCH\fR	\fB\fCx86\_64\fR	TODO
+\fB\fCVERSION\fR	\fB\fC0.1\fR	T{
+Denotes the version of this dockerfile
+T}
+\fB\fCRELEASE\fR	\fB\fC10\fR	T{
+Denotes the release of this dockerfile
+T}
+\fB\fCARCH\fR	\fB\fCx86\_64\fR	Denotes the architecture
 .TE
 
 
 .SH SECURITY IMPLICATIONS
+.PP
+The following sections describe potential security issues related to how the container image was designed to run.
+
 .SH Ports
+.PP
+Exposed TCP (default) or UDP ports that the container listens on at runtime include the following:
+
 .TS
 allbox;
 l l l 
 l l l .
 \fB\fCPort Container\fR	\fB\fCPort Host\fR	\fB\fCDescription\fR
-4001	0	TODO
-7001	0	TODO
-2379	0	TODO
-2380	0	TODO
+4001	4001	Use for something
+7001	7001	Used for something else
+2379	2379	Used for the another thing
+2380	2380	Used for the last thing
 .TE
 
 .SH Volumes
+.PP
+Directories that are mounted from the host system to a mount point inside the container include the following:
+
 .TS
 allbox;
 l l l 
 l l l .
 \fB\fCVolume Container\fR	\fB\fCVolume Host\fR	\fB\fCDescription\fR
-/test	TODO	TODO
-/something	TODO	TODO
-/else	TODO	TODO
-/another	TODO	TODO
+/test	/tmp/test	A test mount
+/something	/tmp/something	Another test mount
+/else	/tmp/else	The else test mount
+/another	/var/tmp/another	The last test mount
 .TE
 
 .SH Daemon
@@ -67,6 +85,9 @@ l l l .
 This image is expected to be run as a daemon
 
 .SH Expected Capabilities
+.PP
+This container needs to open one or more Linux capabilities (see \fB\fCman capabilities 7\fR) to the host computer. The following capababilities (added with the \-\-cap\-add option) are expected:
+
 .RS
 .IP \(bu 2
 NET\_ADMIN
@@ -80,3 +101,5 @@ SYS\_ADMIN
 .PP
 
 \[la]http://example.org/asd/asd\[ra]
+
+\[la]http://example.org/sdgfsdf\[ra]
